@@ -9,6 +9,11 @@ export default NextAuth({
         // jwt: true
         strategy: "jwt",
     },
+    pages: {
+        signIn: '/auth/login',
+        signOut: '/auth/logout',
+        error: '/auth/error', // Error code passed in query string as ?error=
+    },
     providers: [
         CredentialsProvider({
             name: 'Calendso',
