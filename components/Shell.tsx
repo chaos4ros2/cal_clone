@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { useState } from "react";
+import { useRouter } from "next/router";
 import { signOut, useSession } from 'next-auth/react';
 
 export default function Shell(props) {
+    const router = useRouter();
     const { data: session, status } = useSession();
     const loading = status === "loading";
     const [ profileDropdownExpanded, setProfileDropdownExpanded ] = useState(false);
@@ -25,19 +27,19 @@ export default function Shell(props) {
                                     <div className="hidden md:block">
                                         <div className="ml-10 flex items-baseline space-x-4">
                                             <Link href="/">
-                                                <a className="bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                                                <a className={router.pathname == "/" ? "bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium" : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"}>Dashboard</a>
                                             </Link>
                                             <Link href="/">
-                                                <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Bookings</a>
+                                                <a className={router.pathname.startsWith("/bookings") ? "bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium" : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"}>Bookings</a>
                                             </Link>
                                             <Link href="/">
-                                                <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Availability</a>
+                                                <a className={router.pathname.startsWith("/availability") ? "bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium" : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"}>Availability</a>
                                             </Link>
                                             <Link href="/integrations">
-                                                <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Integrations</a>
+                                                <a className={router.pathname.startsWith("/integrations") ? "bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium" : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"}>Integrations</a>
                                             </Link>
                                             <Link href="/">
-                                                <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team</a>
+                                                <a className={router.pathname.startsWith("/team") ? "bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium" : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"}>Team</a>
                                             </Link>
                                         </div>
                                     </div>
