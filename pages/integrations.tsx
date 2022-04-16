@@ -1,9 +1,10 @@
 import Head from 'next/head';
+import prisma from '../lib/prisma';
 import Shell from '../components/Shell';
 import { useState } from 'react';
 import { useSession, getSession } from 'next-auth/react';
 
-export default function Home() {
+export default function Home(props) {
     const { data: session, status } = useSession();
     const loading = status === "loading";
     const [integrations, setIntegrations] = useState([]);
@@ -17,15 +18,6 @@ export default function Home() {
         }
     }
 
-    function getIntegrations() {
-        fetch('/api/integrations')
-            .then((response) => response.json())
-            .then((data) => setIntegrations(data));
-    }
-
-    // TODO: Stop this function from running repeatedly
-    getIntegrations()
-
     function toggleAddModal() {
         setShowAddModal(!showAddModal);
     }
@@ -36,7 +28,6 @@ export default function Home() {
             .then((data) => window.location.href = data.url);
     }
 
-    console.log(integrations);
     return (
         <div>
             <Head>
@@ -47,7 +38,7 @@ export default function Home() {
             <Shell heading="Integrations">
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                     <ul className="divide-y divide-gray-200">
-                        {integrations.map((integration) =>
+                        {props.credentials.map((integration) =>
                             <li>
                                 <a href="#" className="block hover:bg-gray-50">
                                     <div className="flex items-center px-4 py-4 sm:px-6">
@@ -97,7 +88,7 @@ export default function Home() {
                             </li>
                         )}
                     </ul>
-                    {integrations.length == 0 &&
+                    {props.credentials.length == 0 &&
                         <div className="bg-white shadow sm:rounded-lg">
                             <div className="flex">
                                 <div className="py-9 pl-8">
@@ -191,4 +182,30 @@ export default function Home() {
             </Shell>
         </div>
     );
+}
+
+export async function getServerSideProps(context) {
+    const session = await getSession(context);
+
+    const user = await prisma.user.findFirst({
+        where: {
+            email: session.user.email,
+        },
+        select: {
+            id: true
+        }
+    });
+
+    const credentials = await prisma.credential.findMany({
+        where: {
+            userId: user.id,
+        },
+        select: {
+            type: true,
+            key: true
+        }
+    });
+    return {
+      props: {credentials}, // will be passed to the page component as props
+    }
 }
